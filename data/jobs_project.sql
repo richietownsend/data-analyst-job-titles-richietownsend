@@ -39,12 +39,11 @@ WHERE review_count > 5000 AND company IS NOT NULL
 GROUP BY company
 ORDER BY avg_rating DESC;*/
 
-SELECT title
+/*SELECT title
 FROM data_analyst_jobs
-WHERE title LIKE '%Analyst%';
+WHERE title ILIKE '%Analyst%';*/
 
 
-SELECT title
+/*SELECT title
 FROM data_analyst_jobs
-WHERE title NOT LIKE '%Analyst%' OR NOT LIKE '%Analytics%';*/
-
+WHERE title NOT ILIKE '%Analyst%' AND title NOT ILIKE '%analytics%';*/
