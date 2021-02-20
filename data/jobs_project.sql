@@ -32,9 +32,10 @@ WHERE location = 'TN';*/
 --21 postings in TN--
 
 --Q3--
-/*SELECT COUNT (*)
+/*SELECT location, COUNT (*)
 FROM data_analyst_jobs
-WHERE location IN ('TN', 'KY');*/
+WHERE location IN ('TN', 'KY')
+GROUP BY location;*/
 --27 postings in TN and KY--
 
 --Q4--
@@ -57,6 +58,15 @@ GROUP BY location
 ORDER BY avg_rating DESC;*/
 --Nebraska has the highest average rating--
 
+----ANDREW'S ANSWER----
+/*SELECT location as state, ROUND(AVG(star_rating), 2) as avg_stars
+FROM (SELECT DISTINCT company, location, star_rating
+	FROM data_analyst_jobs
+	WHERE location IS NOT NULL and star_rating IS NOT NULL) AS sub
+GROUP BY location
+ORDER BY avg_stars DESC;*/
+
+
 --Q7--
 /*SELECT COUNT(DISTINCT title)
 FROM data_analyst_jobs;*/
@@ -77,11 +87,29 @@ ORDER BY avg_rating DESC;*/
 --40 companies with more than 5000 reviews across locations--
 --Unilever, General Motors, Nike, American Express, Microsoft and Kaiser Permanente have a 4.2 (4.19999980900000)--
 
+---Brenda's Answer with subs--
+/*SELECT company, avg_star_rating, 
+(SELECT COUNT(DISTINCT(company)) 
+FROM data_analyst_jobs 
+WHERE review_count >= 5000 AND company IS NOT NULL)
+FROM 
+(SELECT company, ROUND(AVG(star_rating),2) AS avg_star_rating
+		FROM data_analyst_jobs 
+		WHERE review_count >= 5000 AND company IS NOT NULL
+ 		GROUP BY company) AS sub
+	GROUP BY 1,2
+	ORDER BY avg_star_rating DESC*/
+
 --Q11--
-/*SELECT COUNT(DISTINCT title)
+/*SELECT COUNT(title) OVER(PARTITION BY )
 FROM data_analyst_jobs
 WHERE title ILIKE '%Analyst%';*/
 --774 distinct titles; 1669 in total--
+
+--Andrew's with a subquery--
+/*SELECT DISTINCT title, (SELECT COUNT(DISTINCT title) as title_count FROM data_analyst_jobs WHERE title ILIKE '%analyst%')
+FROM data_analyst_jobs
+WHERE title ILIKE '%analyst%';*/
 
 --Q12--
 /*SELECT DISTINCT title
@@ -90,9 +118,9 @@ WHERE title NOT ILIKE '%Analyst%' AND title NOT ILIKE '%analytics%';*/
 --4 different job titles don't have analyst or analytics in the name; Tableau in the word in common--
 
 --BONUS--
-SELECT domain AS industry, location, COUNT(title) AS hard_to_fill, company
+/*SELECT domain AS industry, COUNT(title) AS hard_to_fill
 FROM data_analyst_jobs
 WHERE domain IS NOT NULL AND days_since_posting > 21 AND skill ILIKE '%sql%'
-GROUP BY domain, location, company
-ORDER BY domain, hard_to_fill DESC;
+GROUP BY domain
+ORDER BY hard_to_fill DESC;*/
 --Internet and Software (62), Banks and Financial Services(61), Consulting and Business Services(57), Health Care(52)--
